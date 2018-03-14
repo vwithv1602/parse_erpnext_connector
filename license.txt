@@ -1,0 +1,3 @@
+License: license.txt
+
+All rights reserved to vavcoders (www.vavcoders.com). This license agreement is subjected to change at any given time without prior notice.
