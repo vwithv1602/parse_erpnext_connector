@@ -64,9 +64,12 @@ def parse_amazon_order(order_item):
                 'buyer_address_line1':order.ShippingAddress.AddressLine1,
                 'buyer_city':order.ShippingAddress.City,
                 'buyer_state':order.ShippingAddress.StateOrRegion,
-                'buyer_zipcode':order.ShippingAddress.PostalCode,
-                'buyer_phone':order.ShippingAddress.Phone,
+                'buyer_zipcode':order.ShippingAddress.PostalCode
             }
+            if 'Phone' in order.ShippingAddress:
+                parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
+            else:
+                parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
             if 'AddressLine2' in order.ShippingAddress:
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
             else:
