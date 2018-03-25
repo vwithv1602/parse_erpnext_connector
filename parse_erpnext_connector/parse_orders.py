@@ -50,8 +50,13 @@ def parse_amazon_order(order_item):
                 'payment_id':None,
                 'payment_method':order.PaymentMethod,
                 'amount':order.OrderTotal,
-                'order_qty':order.NumberOfItemsUnshipped
+                'order_qty':order.NumberOfItemsUnshipped,
+                'fulfillment_channel':order.FulfillmentChannel
             }
+            if order.FulfillmentChannel and order.FulfillmentChannel=='AFN':
+                parsed_amazon_order['order_details']['fulfillment_channel'] = 'Amazon'
+            elif order.FulfillmentChannel and order.FulfillmentChannel=='MFN':
+                parsed_amazon_order['order_details']['fulfillment_channel'] = 'Seller'                
         except Exception, e:
             vwrite("Exception raised in parse_amazon_order - order information corrupted")
             vwrite(e)
