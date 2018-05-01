@@ -75,7 +75,7 @@ def parse_amazon_order(order_item):
                 parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
             else:
                 parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
-            if order.ShippingAddress.AddressLine2:
+            if 'AddressLine2' in order.ShippingAddress:
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
             else:
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
