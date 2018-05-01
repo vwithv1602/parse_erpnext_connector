@@ -25,14 +25,17 @@ def parse_shopclues_order(order):
         'buyer_id':order.get("user_id"),
         'buyer_name':buyer_full_name,
         'buyer_email':order.get("email"),
+        'buyer_address_line1':order.get("s_address_2"),
         'buyer_city':order.get("s_city"),
         'buyer_state':order.get("s_state"),
         'buyer_zipcode':order.get("s_zipcode"),
-        'buyer_phone':order.get("s_zipcode"),
+        'buyer_phone':order.get("s_phone"),
     }
+    for key, value in order.get("items").items():
+        item_id = key
     parsed_shopclues_order['item_details'] = {
-        'item_id': order.get("items_list")[0].get("product_id"),
-        'all_items': order.get("items_list") # for temporary purpose
+        'item_id': item_id,
+        'all_items': [{'product_id':item_id,'product':order.get("items").get(item_id).get("product"),'selling_price':order.get("total"),'amount':order.get("items").get(item_id).get("amount")}] # for temporary purpose
     }
     return parsed_shopclues_order
 
