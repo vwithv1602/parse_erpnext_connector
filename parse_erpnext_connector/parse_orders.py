@@ -46,15 +46,19 @@ def parse_amazon_order(order_item):
     parsing_successful = True
     if order.OrderStatus != 'Canceled':
         try:
+            payment_method = None
+            if 'PaymentMethod' in order:
+                payment_method = order.PaymentMethod
             parsed_amazon_order['order_details'] = {
                 'order_id':order.AmazonOrderId,
                 'order_date':order.PurchaseDate,
                 'parent_order_id':None,
                 'payment_id':None,
-                'payment_method':order.PaymentMethod,
+                'payment_method':payment_method,
                 'amount':order.OrderTotal,
                 'order_qty':order.NumberOfItemsUnshipped,
-                'fulfillment_channel':order.FulfillmentChannel
+                'fulfillment_channel':order.FulfillmentChannel,
+                'is_amazon_replacement':order.IsReplacementOrder
             }
             if order.FulfillmentChannel and order.FulfillmentChannel=='AFN':
                 parsed_amazon_order['order_details']['fulfillment_channel'] = 'Amazon'
