@@ -44,7 +44,7 @@ def parse_amazon_order(order_item):
     order = order_item[0]
     item = order_item[1].ListOrderItemsResult.OrderItems.OrderItem
     parsing_successful = True
-    if order.OrderStatus != 'Canceled':
+    if order.OrderStatus != 'Canceled' or order.OrderStatus !='Pending':
         try:
             payment_method = None
             if 'PaymentMethod' in order:
@@ -69,10 +69,14 @@ def parse_amazon_order(order_item):
             vwrite(e)
             parsing_successful = False
         try:
+            if 'BuyerEmail' in order:
+                buyer_email = order.BuyerEmail
+            else:
+                buyer_email = "NA"
             parsed_amazon_order['customer_details'] = {
-                'buyer_id':order.BuyerEmail,
+                'buyer_id':buyer_email,
                 'buyer_name':order.BuyerName,
-                'buyer_email':order.BuyerEmail,
+                'buyer_email':buyer_email,
                 'buyer_address_line1':order.ShippingAddress.AddressLine1,
                 'buyer_city':order.ShippingAddress.City,
                 'buyer_state':order.ShippingAddress.StateOrRegion,
@@ -101,7 +105,7 @@ def parse_amazon_order(order_item):
             vwrite(e)
             parsing_successful = False
     else:
-        vwrite("Order %s cancelled" % order.AmazonOrderId)
+        vwrite("Order %s %s" % (order.AmazonOrderId,order.OrderStatus))
     if not parsing_successful or len(parsed_amazon_order)==0:
         parsed_amazon_order = False
     return parsed_amazon_order
