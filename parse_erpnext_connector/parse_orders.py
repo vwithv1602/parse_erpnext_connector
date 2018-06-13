@@ -38,7 +38,6 @@ def parse_shopclues_order(order):
         'all_items': [{'product_id':item_id,'product':order.get("items").get(item_id).get("product"),'selling_price':order.get("total"),'amount':order.get("items").get(item_id).get("amount")}] # for temporary purpose
     }
     return parsed_shopclues_order
-
 def parse_amazon_order(order_item):
     parsed_amazon_order = {}
     order = order_item[0]
@@ -63,16 +62,23 @@ def parse_amazon_order(order_item):
             if order.FulfillmentChannel and order.FulfillmentChannel=='AFN':
                 parsed_amazon_order['order_details']['fulfillment_channel'] = 'Amazon'
             elif order.FulfillmentChannel and order.FulfillmentChannel=='MFN':
-                parsed_amazon_order['order_details']['fulfillment_channel'] = 'Seller'                
+                parsed_amazon_order['order_details']['fulfillment_channel'] = 'Seller'
         except Exception, e:
             vwrite("Exception raised in parse_amazon_order - order information corrupted")
             vwrite(e)
+            vwrite(order_item)
             parsing_successful = False
         try:
-            if 'BuyerEmail' in order:
+	    if order.AmazonOrderId=='405-1996897-8648324':
+		buyer_email='KPS'
+	    else:
+		buyer_email=order.BuyerEmail
+            try:
                 buyer_email = order.BuyerEmail
-            else:
-                buyer_email = "NA"
+            except Exception, e:
+                vwrite("buyer_email exception for %s" % order.AmazonOrderId)
+                vwrite(e.message)
+                parsing_successful = False
             parsed_amazon_order['customer_details'] = {
                 'buyer_id':buyer_email,
                 'buyer_name':order.BuyerName,
@@ -90,10 +96,10 @@ def parse_amazon_order(order_item):
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
             else:
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
-                
         except Exception, e:
             vwrite("Exception raised in parse_amazon_order - buyer information corrupted")
             vwrite(e)
+            vwrite(order_item)
             parsing_successful = False
         try:
             parsed_amazon_order['item_details'] = {
@@ -103,6 +109,7 @@ def parse_amazon_order(order_item):
         except Exception, e:
             vwrite("Exception raised in parse_amazon_order - item information corrupted")
             vwrite(e)
+            vwrite(order_item)
             parsing_successful = False
     else:
         vwrite("Order %s %s" % (order.AmazonOrderId,order.OrderStatus))
