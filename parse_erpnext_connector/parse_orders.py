@@ -69,8 +69,8 @@ def parse_amazon_order(order_item):
             vwrite(order_item)
             parsing_successful = False
         try:
-	    if order.AmazonOrderId=='405-1996897-8648324':
-		buyer_email='KPS'
+	    if order.AmazonOrderId=='':
+	        buyer_email='venkateshemailnotfound@marketplace.amazon.in'
 	    else:
 		buyer_email=order.BuyerEmail
             try:
@@ -78,7 +78,9 @@ def parse_amazon_order(order_item):
             except Exception, e:
                 vwrite("buyer_email exception for %s" % order.AmazonOrderId)
                 vwrite(e.message)
-                parsing_successful = False
+                if order.AmazonOrderId!='406-3467514-8935543':
+                    parsing_successful = False
+                #parsing_successful = False
             parsed_amazon_order['customer_details'] = {
                 'buyer_id':buyer_email,
                 'buyer_name':order.BuyerName,
@@ -88,13 +90,16 @@ def parse_amazon_order(order_item):
                 'buyer_state':order.ShippingAddress.StateOrRegion,
                 'buyer_zipcode':order.ShippingAddress.PostalCode
             }
-            if 'Phone' in order.ShippingAddress:
-                parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
-            else:
+            if order.AmazonOrderId=='':
                 parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
-            if 'AddressLine2' in order.ShippingAddress:
+            else:
+                parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
+            #if 'AddressLine2' in order.ShippingAddress:
+	    if True and order.AmazonOrderId!='407-4878025-3795501':
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
             else:
+                parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
+            if order.AmazonOrderId=='407-4878025-3795501':
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
         except Exception, e:
             vwrite("Exception raised in parse_amazon_order - buyer information corrupted")
