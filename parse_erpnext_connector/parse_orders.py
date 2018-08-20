@@ -48,13 +48,19 @@ def parse_amazon_order(order_item):
             payment_method = None
             if 'PaymentMethod' in order:
                 payment_method = order.PaymentMethod
+            order_total = order.OrderTotal
+            try:
+                promotion_discount = item[0].PromotionDiscount
+                order_total = order_total - promotion_discount
+            except Exception, e:
+                dummy=0
             parsed_amazon_order['order_details'] = {
                 'order_id':order.AmazonOrderId,
                 'order_date':order.PurchaseDate,
                 'parent_order_id':None,
                 'payment_id':None,
                 'payment_method':payment_method,
-                'amount':order.OrderTotal,
+                'amount':order_total,
                 'order_qty':order.NumberOfItemsUnshipped,
                 'fulfillment_channel':order.FulfillmentChannel,
                 'is_amazon_replacement':order.IsReplacementOrder
@@ -69,12 +75,12 @@ def parse_amazon_order(order_item):
             vwrite(order_item)
             parsing_successful = False
         try:
-	    if order.AmazonOrderId=='':
-	        buyer_email='venkateshemailnotfound@marketplace.amazon.in'
+	    if order.AmazonOrderId=='402-9723264-0413142':
+	        buyer_email='yogeshparasharemailnotfound@marketplace.amazon.in'
 	    else:
 		buyer_email=order.BuyerEmail
             try:
-                buyer_email = order.BuyerEmail
+                buyer_email = buyer_email
             except Exception, e:
                 vwrite("buyer_email exception for %s" % order.AmazonOrderId)
                 vwrite(e.message)
@@ -85,22 +91,32 @@ def parse_amazon_order(order_item):
                 'buyer_id':buyer_email,
                 'buyer_name':order.BuyerName,
                 'buyer_email':buyer_email,
-                'buyer_address_line1':order.ShippingAddress.AddressLine1,
+                #'buyer_address_line1':order.ShippingAddress.AddressLine1,
                 'buyer_city':order.ShippingAddress.City,
                 'buyer_state':order.ShippingAddress.StateOrRegion,
                 'buyer_zipcode':order.ShippingAddress.PostalCode
             }
-            if order.AmazonOrderId=='':
-                parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
-            else:
+            #if order.AmazonOrderId=='403-4661462-2381149':
+            #    parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
+            #else:
+            #    parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
+            try:
                 parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
-            #if 'AddressLine2' in order.ShippingAddress:
-	    if True and order.AmazonOrderId!='407-4878025-3795501':
+            except Exception, e:
+                parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
+            try:
+                parsed_amazon_order['customer_details']['buyer_address_line1'] = order.ShippingAddress.AddressLine1
+            except Exception, e:
+                parsed_amazon_order['customer_details']['buyer_address_line1'] = 'NA'
+            try:
                 parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
-            else:
-                parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
-            if order.AmazonOrderId=='407-4878025-3795501':
-                parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
+            except Exception, e:
+                parsed_amazon_order['customer_details']['buyer_address_line2'] = 'NA'
+            #if 'AddressLine2' in order.ShippingAddress:
+	    #if order.AmazonOrderId=='404-0144366-4954730':
+            #    parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
+            #else:
+            #    parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
         except Exception, e:
             vwrite("Exception raised in parse_amazon_order - buyer information corrupted")
             vwrite(e)
