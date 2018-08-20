@@ -51,7 +51,7 @@ def parse_amazon_order(order_item):
             order_total = order.OrderTotal
             try:
                 promotion_discount = item[0].PromotionDiscount
-                order_total = order_total - promotion_discount
+                order_total = float(order_total) + (float(promotion_discount)+ (float(promotion_discount)*0.18))
             except Exception, e:
                 dummy=0
             parsed_amazon_order['order_details'] = {
