@@ -1,5 +1,5 @@
 import datetime
-from erpnext_amazon.vlog import vwrite
+from erpnext_uyn_customizations.vlog import vwrite
 def timestamptodate(timestamp):
     return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d')
 def parse_order(connector_type,order):
@@ -8,6 +8,8 @@ def parse_order(connector_type,order):
         parsed_order = parse_shopclues_order(order)
     if connector_type.lower() == 'amazon':
         parsed_order = parse_amazon_order(order)
+    if connector_type.lower() == 'flipkart':
+        parsed_order = parse_flipkart_order(order)
     return parsed_order
 
 def parse_shopclues_order(order):
@@ -161,3 +163,15 @@ def parse_amazon_order(order_item):
         parsed_amazon_order = False
     return parsed_amazon_order
 
+def parse_flipkart_order(order_item):
+    parsed_flipkart_order = {}
+    parsing_successful = True
+    order = order_item.get("shipment_id_details")
+    fsn = order_item.get("fsn")
+    vwrite("fsn")
+    vwrite(fsn)
+    parsed_flipkart_order['item_details'] = {
+        'item_id': fsn
+    }
+
+    return parsed_flipkart_order
