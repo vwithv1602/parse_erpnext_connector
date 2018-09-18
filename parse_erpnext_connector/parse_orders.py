@@ -75,43 +75,66 @@ def parse_amazon_order(order_item):
             vwrite(order_item)
             parsing_successful = False
         try:
-	    if order.AmazonOrderId=='402-9723264-0413142':
-	        buyer_email='yogeshparasharemailnotfound@marketplace.amazon.in'
-	    else:
-		buyer_email=order.BuyerEmail
-            try:
-                buyer_email = buyer_email
-            except Exception, e:
-                vwrite("buyer_email exception for %s" % order.AmazonOrderId)
-                vwrite(e.message)
-                if order.AmazonOrderId!='406-3467514-8935543':
-                    parsing_successful = False
-                #parsing_successful = False
-            parsed_amazon_order['customer_details'] = {
-                'buyer_id':buyer_email,
-                'buyer_name':order.BuyerName,
-                'buyer_email':buyer_email,
-                #'buyer_address_line1':order.ShippingAddress.AddressLine1,
-                'buyer_city':order.ShippingAddress.City,
-                'buyer_state':order.ShippingAddress.StateOrRegion,
-                'buyer_zipcode':order.ShippingAddress.PostalCode
-            }
-            #if order.AmazonOrderId=='403-4661462-2381149':
-            #    parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
-            #else:
-            #    parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
-            try:
-                parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
-            except Exception, e:
-                parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
-            try:
-                parsed_amazon_order['customer_details']['buyer_address_line1'] = order.ShippingAddress.AddressLine1
-            except Exception, e:
-                parsed_amazon_order['customer_details']['buyer_address_line1'] = 'NA'
-            try:
-                parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
-            except Exception, e:
-                parsed_amazon_order['customer_details']['buyer_address_line2'] = 'NA'
+            if order.OrderStatus == "Pending":
+                buyer_email="dummyemail@gmail.com"
+                try:
+                    buyer_email = buyer_email
+                except Exception, e:
+                    vwrite("buyer_email exception for %s" % order.AmazonOrderId)
+                    vwrite(e.message)
+                    if order.AmazonOrderId!='406-3467514-8935543':
+                        parsing_successful = False
+                    #parsing_successful = False
+                parsed_amazon_order['customer_details'] = {
+                    'buyer_id':buyer_email,
+                    'buyer_name':"ToBeUpdated",
+                    'buyer_email':buyer_email,
+                    #'buyer_address_line1':order.ShippingAddress.AddressLine1,
+                    'buyer_city':"NA",
+                    'buyer_state':"NA",
+                    'buyer_zipcode':"NA",
+                    'buyer_phone':"NA",
+                    'buyer_address_line1':"NA",
+                    'buyer_address_line2':"NA"
+                }
+            else:
+                if order.AmazonOrderId=='406-4876683-9312302':
+                    buyer_email='mukeshdadhichemailnotfound@marketplace.amazon.in'
+                else:
+                    buyer_email=order.BuyerEmail
+                try:
+                    buyer_email = buyer_email
+                except Exception, e:
+                    vwrite("buyer_email exception for %s" % order.AmazonOrderId)
+                    vwrite(e.message)
+                    if order.AmazonOrderId!='406-3467514-8935543':
+                        parsing_successful = False
+                    #parsing_successful = False
+                parsed_amazon_order['customer_details'] = {
+                    'buyer_id':buyer_email,
+                    'buyer_name':order.BuyerName,
+                    'buyer_email':buyer_email,
+                    #'buyer_address_line1':order.ShippingAddress.AddressLine1,
+                    'buyer_city':order.ShippingAddress.City,
+                    'buyer_state':order.ShippingAddress.StateOrRegion,
+                    'buyer_zipcode':order.ShippingAddress.PostalCode
+                }
+                #if order.AmazonOrderId=='403-4661462-2381149':
+                #    parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
+                #else:
+                #    parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
+                try:
+                    parsed_amazon_order['customer_details']['buyer_phone'] = order.ShippingAddress.Phone
+                except Exception, e:
+                    parsed_amazon_order['customer_details']['buyer_phone'] = 'NA'
+                try:
+                    parsed_amazon_order['customer_details']['buyer_address_line1'] = order.ShippingAddress.AddressLine1
+                except Exception, e:
+                    parsed_amazon_order['customer_details']['buyer_address_line1'] = 'NA'
+                try:
+                    parsed_amazon_order['customer_details']['buyer_address_line2'] = order.ShippingAddress.AddressLine2
+                except Exception, e:
+                    parsed_amazon_order['customer_details']['buyer_address_line2'] = 'NA'
             #if 'AddressLine2' in order.ShippingAddress:
 	    #if order.AmazonOrderId=='404-0144366-4954730':
             #    parsed_amazon_order['customer_details']['buyer_address_line2'] = ""
@@ -137,3 +160,4 @@ def parse_amazon_order(order_item):
     if not parsing_successful or len(parsed_amazon_order)==0:
         parsed_amazon_order = False
     return parsed_amazon_order
+
