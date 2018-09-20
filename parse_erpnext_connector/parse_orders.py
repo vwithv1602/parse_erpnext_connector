@@ -167,11 +167,42 @@ def parse_flipkart_order(order_item):
     parsed_flipkart_order = {}
     parsing_successful = True
     order = order_item.get("shipment_id_details")
-    fsn = order_item.get("fsn")
-    vwrite("fsn")
-    vwrite(fsn)
+    flipkart_order = order_item.get("flipkart_order")
     parsed_flipkart_order['item_details'] = {
-        'item_id': fsn
+        'item_id': flipkart_order.get("orderItems")[0].get("fsn"),
+        'all_items':flipkart_order.get("orderItems")
     }
-
+    payment_method = None
+    order_total = 0
+    
+    parsed_flipkart_order['order_details'] = {
+        'order_id':order[0].get("orderId"),
+        'order_date':flipkart_order.get("orderItems")[0].get("orderDate"),
+        'parent_order_id':None,
+        'payment_id':None,
+        'payment_method':payment_method,
+        'amount':flipkart_order.get("orderItems")[0].get("priceComponents").get("totalPrice"),
+        'order_qty':flipkart_order.get("orderItems")[0].get("quantity"),
+        'fulfillment_channel':None,
+        'is_flipkart_replacement':flipkart_order.get("orderItems")[0].get("is_replacement")
+    }
+    buyer_name = order[0].get("billingAddress").get("firstName")
+    if order[0].get("billingAddress").get("lastName"):
+        buyer_name = "%s %s" %(buyer_name,order[0].get("billingAddress").get("lastName"))
+    parsed_flipkart_order['customer_details'] = {
+        'buyer_id':order[0].get("orderId"),
+        'buyer_name':buyer_name,
+        # 'buyer_email':buyer_email,
+        'buyer_address_line1':order[0].get("deliveryAddress").get("addressLine1"),
+        'buyer_city':order[0].get("deliveryAddress").get("city"),
+        'buyer_state':order[0].get("deliveryAddress").get("state"),
+        'buyer_zipcode':order[0].get("deliveryAddress").get("pinCode"),
+        'buyer_address_id': order[0].get("locationId"),
+        'buyer_phone':order[0].get("deliveryAddress").get("contactNumber"),
+        'buyer_email':"NA"
+    }
+    try:
+        parsed_flipkart_order['customer_details']['buyer_address_line2'] = order[0].get("deliveryAddress").get("addressLine2")
+    except Exception, e:
+        parsed_flipkart_order['customer_details']['buyer_address_line2'] = 'NA'
     return parsed_flipkart_order
