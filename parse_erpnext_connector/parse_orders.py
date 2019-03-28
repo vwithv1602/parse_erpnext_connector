@@ -45,15 +45,18 @@ def parse_amazon_order(order_item):
     order = order_item[0]
     item = order_item[1].ListOrderItemsResult.OrderItems.OrderItem
     parsing_successful = True
+    # if order.AmazonOrderId=='408-1217885-6089149':
+	# vwrite(order)
     if order.OrderStatus != 'Canceled' or order.OrderStatus !='Pending':
         try:
             payment_method = None
             if 'PaymentMethod' in order:
                 payment_method = order.PaymentMethod
-            order_total = order.OrderTotal
+            order_total = 0
             try:
-                promotion_discount = item[0].PromotionDiscount
-                order_total = float(order_total) + (float(promotion_discount)+ (float(promotion_discount)*0.18))
+                order_total = item[0].ItemPrice
+                # promotion_discount = item[0].PromotionDiscount
+                # order_total = float(order_total) + (float(promotion_discount)+ (float(promotion_discount)*0.18))
             except Exception, e:
                 dummy=0
             parsed_amazon_order['order_details'] = {
@@ -100,8 +103,8 @@ def parse_amazon_order(order_item):
                     'buyer_address_line2':"NA"
                 }
             else:
-                if order.AmazonOrderId=='406-4876683-9312302':
-                    buyer_email='mukeshdadhichemailnotfound@marketplace.amazon.in'
+                if order.AmazonOrderId=='405-0434184-1571506':
+                    buyer_email='amleshkumarbhaktaemailnotfound@marketplace.amazon.in'
                 else:
                     buyer_email=order.BuyerEmail
                 try:
