@@ -45,17 +45,18 @@ def parse_amazon_order(order_item):
     order = order_item[0]
     item = order_item[1].ListOrderItemsResult.OrderItems.OrderItem
     parsing_successful = True
-    if order.AmazonOrderId=='171-4226606-2335509':
-	    vwrite(order)
+    # if order.AmazonOrderId=='408-1217885-6089149':
+	# vwrite(order)
     if order.OrderStatus != 'Canceled' or order.OrderStatus !='Pending':
         try:
             payment_method = None
             if 'PaymentMethod' in order:
                 payment_method = order.PaymentMethod
-            order_total = order.OrderTotal
+            order_total = 0
             try:
-                promotion_discount = item[0].PromotionDiscount
-                order_total = float(order_total) + (float(promotion_discount)+ (float(promotion_discount)*0.18))
+                order_total = item[0].ItemPrice
+                # promotion_discount = item[0].PromotionDiscount
+                # order_total = float(order_total) + (float(promotion_discount)+ (float(promotion_discount)*0.18))
             except Exception, e:
                 dummy=0
             parsed_amazon_order['order_details'] = {
@@ -108,7 +109,7 @@ def parse_amazon_order(order_item):
                     try:
                         buyer_email=order.BuyerEmail
                     except:
-                        buyer_email = buyer_email
+                        buyer_email = "dummyemail@gmail.com"
                 try:
                     buyer_email = buyer_email
                 except Exception, e:
