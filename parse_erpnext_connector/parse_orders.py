@@ -45,6 +45,8 @@ def parse_amazon_order(order_item):
     order = order_item[0]
     item = order_item[1].ListOrderItemsResult.OrderItems.OrderItem
     parsing_successful = True
+    if order.AmazonOrderId=='171-4226606-2335509':
+	    vwrite(order)
     if order.OrderStatus != 'Canceled' or order.OrderStatus !='Pending':
         try:
             payment_method = None
@@ -100,10 +102,13 @@ def parse_amazon_order(order_item):
                     'buyer_address_line2':"NA"
                 }
             else:
-                if order.AmazonOrderId=='406-4876683-9312302':
-                    buyer_email='mukeshdadhichemailnotfound@marketplace.amazon.in'
+                if order.AmazonOrderId=='405-0434184-1571506':
+                    buyer_email='amleshkumarbhaktaemailnotfound@marketplace.amazon.in'
                 else:
-                    buyer_email=order.BuyerEmail
+                    try:
+                        buyer_email=order.BuyerEmail
+                    except:
+                        buyer_email = buyer_email
                 try:
                     buyer_email = buyer_email
                 except Exception, e:
